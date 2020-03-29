@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 //Fetcher interface
@@ -12,36 +13,60 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
+//Crawler struct
+type Crawler struct {
+	scheduledUrls map[string]bool
+	mu            sync.Mutex
+}
+
+func (c *Crawler) visitScheduled(url string) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if _, ok := c.scheduledUrls[url]; ok {
+		return true
+	}
+	c.scheduledUrls[url] = true
+	return false
+}
+
+func newCrawler() *Crawler {
+	return &Crawler{scheduledUrls: make(map[string]bool)}
+}
+
 // Crawl uses fetcher to recursively crawl
 // pages starting with url, to a maximum of depth.
-func Crawl(url string, depth int, fetcher Fetcher) {
-	defer wg.Done()
+func (c *Crawler) Crawl(url string, depth int, fetcher Fetcher) {
+	var wg sync.WaitGroup
 
-	if depth <= 0 {
+	if c.visitScheduled(url) || depth <= 0 {
 		return
 	}
+
 	body, urls, err := fetcher.Fetch(url)
 	if err != nil {
-		if err.Error() != "cached" {
-			fmt.Println(err)
-		}
+		fmt.Println(err)
 		return
 	}
 	fmt.Printf("found: %s %q\n", url, body)
+
 	for _, u := range urls {
 		wg.Add(1)
-		go Crawl(u, depth-1, fetcher)
+		go func(url string) {
+			defer wg.Done()
+			c.Crawl(url, depth-1, fetcher)
+		}(u)
 	}
+
+	wg.Wait()
 	return
 }
 
-var wg sync.WaitGroup
-
 // CrawlDemo demo
 func CrawlDemo() {
-	wg.Add(1)
-	Crawl("https://golang.org/", 4, fetcher)
-	wg.Wait()
+	crawler := newCrawler()
+	start := time.Now()
+	crawler.Crawl("https://golang.org/", 4, fetcher)
+	fmt.Println("Crawler elapsed:", time.Since(start))
 }
 
 // fakeFetcher is Fetcher that returns canned results.
@@ -53,26 +78,13 @@ type fakeResult struct {
 }
 
 func (f fakeFetcher) Fetch(url string) (string, []string, error) {
-	cache.mu.Lock()
-	defer cache.mu.Unlock()
-	if cache.v[url] == nil {
-		if res, ok := f[url]; ok {
-			cache.v[url] = res
-			return res.body, res.urls, nil
-		}
-		cache.v[url] = &fakeResult{}
-		return "", nil, fmt.Errorf("not found: %s", url)
+	// simulate real fetch
+	time.Sleep(time.Millisecond * 300)
+	if res, ok := f[url]; ok {
+		return res.body, res.urls, nil
 	}
-	return "", nil, fmt.Errorf("cached")
+	return "", nil, fmt.Errorf("not found: %s", url)
 }
-
-// SafeCache is safe to use concurrently.
-type SafeCache struct {
-	mu sync.Mutex
-	v  map[string]*fakeResult
-}
-
-var cache = SafeCache{v: make(map[string]*fakeResult)}
 
 // fetcher is a populated fakeFetcher.
 var fetcher = fakeFetcher{
