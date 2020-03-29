@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -23,9 +23,9 @@ func (v *vector) scale(f float64) {
 	v.Y = v.Y * f
 }
 
-// MathDemo demo: auto-(de)referencing works only for methods.
+// MethodsDemo demo: auto-(de)referencing works only for methods.
 // Arguments of regular functions should be of explicit types.
-func MathDemo() {
+func MethodsDemo() {
 	vec := vector{3, 4}
 	fmt.Println(vec.abs())
 	vec.scale(10) // auto-ref: (&vec)

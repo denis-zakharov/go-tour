@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"math"
 	"math/cmplx"
+
+	"github.com/denis-zakharov/go-tour/util"
 )
 
 // bulk assignment demo
@@ -42,67 +44,67 @@ func main() {
 	var s string
 	fmt.Printf("%v %v %v %q\n", i, f, b, s)
 
-	TypeConvDemo("Type conversions for constants")
+	util.TypeConvDemo("Type conversions for constants")
 
-	fmt.Printf("Accum 4: %d\n", Accum(4))
-	fmt.Printf("ForWhile 1000: %d\n", ForWhile(1000))
+	fmt.Printf("Accum 4: %d\n", util.Accum(4))
+	fmt.Printf("ForWhile 1000: %d\n", util.ForWhile(1000))
 	fmt.Println("Forever 2:")
-	ForeverLoop(2)
+	util.ForeverLoop(2)
 	fmt.Println()
-	fmt.Println("Return Sqrt after 5 iterations:", Sqrt(2, 5))
+	fmt.Println("Return Sqrt after 5 iterations:", util.Sqrt(2, 5))
 	fmt.Println("math.Sqrt", math.Sqrt(2))
 	fmt.Println()
-	CheckOS()
+	util.CheckOS()
 	fmt.Println()
-	SatCheck()
+	util.SatCheck()
 	fmt.Println()
-	SwitchTrue()
+	util.SwitchTrue()
 	fmt.Println()
-	DeferDemo()
+	util.DeferDemo()
 	fmt.Println()
-	Countdown()
-	fmt.Println()
-
-	StructDemo()
-	ArraysDemo()
+	util.Countdown()
 	fmt.Println()
 
-	MapsDemo()
-	fmt.Println(WordCount("I ate a donut. When I ate another donut!"))
-
-	fmt.Println()
-	FuncValues()
+	util.StructDemo()
+	util.ArraysDemo()
 	fmt.Println()
 
-	MathDemo()
+	util.MapsDemo()
+	fmt.Println(util.WordCount("I ate a donut. When I ate another donut!"))
+
+	fmt.Println()
+	util.FuncValues()
 	fmt.Println()
 
-	InterfaceDemo()
-
-	ErrorDemo(0)
-	ErrorDemo(1)
-
-	Rot13Demo()
+	util.MethodsDemo()
 	fmt.Println()
 
-	ParSumDemo()
+	util.InterfaceDemo()
+
+	util.ErrorDemo(0)
+	util.ErrorDemo(1)
+
+	util.Rot13Demo()
 	fmt.Println()
 
-	FibStreamDemo()
+	util.ParSumDemo()
 	fmt.Println()
 
-	FibSelectDemo()
+	util.FibStreamDemo()
 	fmt.Println()
 
-	DefaultSelectDemo()
+	util.FibSelectDemo()
 	fmt.Println()
 
-	WalkDemo()
+	util.DefaultSelectDemo()
 	fmt.Println()
 
-	MutexDemo()
+	util.WalkDemo()
 	fmt.Println()
 
-	CrawlDemo()
+	util.MutexDemo()
+	fmt.Println()
+
+	util.CrawlDemo()
 	fmt.Println()
 }
